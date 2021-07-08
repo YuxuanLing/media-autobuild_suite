@@ -178,7 +178,7 @@ if [[ $ripgrep = y || $rav1e = y || $dssim = y || $libavif = y ]] || enabled lib
     log set_default_toolchain "$RUSTUP_HOME/bin/rustup.exe" default \
         "stable-$CARCH-pc-windows-gnu"
 fi
-
+:<<!
 _check=(bin-global/rg.exe)
 if [[ $ripgrep = y ]] &&
     do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/ripgrep.git"; then
@@ -304,7 +304,7 @@ if [[ $mplayer = y || $mpv = y ]] ||
     _check=(ass/ass{,_types}.h libass.{{,l}a,pc})
     _deps=(lib{freetype,fontconfig,harfbuzz,fribidi}.a)
     [[ $ffmpeg = sharedlibs ]] && _check+=(bin-video/libass-9.dll libass.dll.a)
-    if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/ibass.git"; then
+    if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/libass.git"; then
         do_autoreconf
         do_uninstall bin{,-video}/libass-9.dll libass.dll.a include/ass "${_check[@]}"
         extracommands=()
@@ -481,7 +481,7 @@ if { { [[ $ffmpeg != no || $standalone = y ]] && enabled libtesseract; } ||
         do_checkIfExist
     fi
 fi
-
+!
 file_installed -s libtiff-4.pc &&
     grep_or_sed '-ldeflate' "$(file_installed libtiff-4.pc)" \
         's/Libs.private:.*/& -ldeflate/'
