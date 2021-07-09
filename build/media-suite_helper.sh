@@ -1158,6 +1158,39 @@ do_removeOptions() {
     done
 }
 
+do_local_patch() {
+    local binarypatch="--binary"
+    case $1 in -p) binarypatch="" && shift ;; esac
+    local patch="${1%% *}"     # Location or link to patch.
+    local patchName="${1##* }" # Basename of file. (test-diff-files.diff)
+    local am=false             # Use git am to apply patch. Use with .patch files
+    local strip=${3:-1}        # Leading directories to strip. "patch -p${strip}"
+    [[ $patchName == "$patch" ]] && patchName="${patch##*/}"
+    [[ $2 == am ]] && am=true
+
+
+    if [[ -f $patchName ]]; then
+        if $am; then
+            git apply -3 --check --ignore-space-change --ignore-whitespace "$patchName" > /dev/null 2>&1 &&
+                git am -q -3 --ignore-whitespace --no-gpg-sign "$patchName" > /dev/null 2>&1 &&
+                return 0
+            git am -q --abort > /dev/null 2>&1
+        else
+            patch --dry-run $binarypatch -s -N -p"$strip" -i "$patchName" > /dev/null 2>&1 &&
+                patch $binarypatch -s -N -p"$strip" -i "$patchName" &&
+                return 0
+        fi
+        printf '%b\n' "${orange}${patchName}${reset}" \
+            '\tLocal patch could not be applied with `'"$($am && echo "git am" || echo "patch")"'`. Continuing without local patching.'
+    else
+        printf '%b\n' "${orange}${patchName}${reset}" \
+            '\tLocal patch not found anywhere. Continuing without local patching.'
+    fi
+    return 1
+}
+
+
+
 do_patch() {
     local binarypatch="--binary"
     case $1 in -p) binarypatch="" && shift ;; esac
