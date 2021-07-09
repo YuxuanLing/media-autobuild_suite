@@ -178,7 +178,8 @@ if [[ $ripgrep = y || $rav1e = y || $dssim = y || $libavif = y ]] || enabled lib
     log set_default_toolchain "$RUSTUP_HOME/bin/rustup.exe" default \
         "stable-$CARCH-pc-windows-gnu"
 fi
-:<<!
+
+
 _check=(bin-global/rg.exe)
 if [[ $ripgrep = y ]] &&
     do_vcs "/e/work/home_repos/ffmpeg_build_windows/ripgrep.git"; then
@@ -481,7 +482,8 @@ if { { [[ $ffmpeg != no || $standalone = y ]] && enabled libtesseract; } ||
         do_checkIfExist
     fi
 fi
-!
+
+
 file_installed -s libtiff-4.pc &&
     grep_or_sed '-ldeflate' "$(file_installed libtiff-4.pc)" \
         's/Libs.private:.*/& -ldeflate/'
