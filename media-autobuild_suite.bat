@@ -1629,6 +1629,7 @@ if %updateSuite%==y (
 )
 
 rem update
+rem TODO: add some check here , not need this every time 
 call :runBash update.log /build/media-suite_update.sh --build32=%build32% --build64=%build64%
 
 if exist "%build%\update_core" (
