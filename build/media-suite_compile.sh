@@ -175,7 +175,7 @@ if [[ $ripgrep = y || $rav1e = y || $dssim = y || $libavif = y ]] || enabled lib
             install "stable-$CARCH-pc-windows-gnu"
     fi
     ## TODO: not need rustup_update here each time 
-    log rustup_update "$RUSTUP_HOME/bin/rustup.exe" update
+    ## log rustup_update "$RUSTUP_HOME/bin/rustup.exe" update
     log set_default_toolchain "$RUSTUP_HOME/bin/rustup.exe" default \
         "stable-$CARCH-pc-windows-gnu"
 fi
@@ -1365,7 +1365,7 @@ fi
 _check=(libvidstab.a vidstab.pc)
 if [[ $ffmpeg != no ]] && enabled libvidstab &&
     do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/vid.stab.git" vidstab; then
-    do_patch "https://github.com/georgmartius/vid.stab/pull/108.patch" am
+    do_patch "http://10.1.1.43:8001/patches/vid.stab.git/108.patch" am
     do_pacman_install openmp
     do_uninstall include/vid.stab "${_check[@]}"
     do_cmakeinstall
