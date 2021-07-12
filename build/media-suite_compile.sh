@@ -152,7 +152,7 @@ do_simple_print -p '\n\t'"${orange}Starting $bits compilation of global tools${r
 if [[ $packing = y &&
     ! "$(/opt/bin/upx -V 2> /dev/null | head -1)" = "upx 3.96" ]] &&
     do_wget -h 014912ea363e2d491587534c1e7efd5bc516520d8f2cdb76bb0aaf915c5db961 \
-        "https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win32.zip"; then
+        "http://10.1.1.43:8001/archive/upx-3.96-win32.zip"; then
     do_install upx.exe /opt/bin/upx.exe
 fi
 
@@ -399,7 +399,7 @@ if [[ $mediainfo = y || $bmx = y || $curl != n ]]; then
     [[ $standalone == y ]] && _check+=(bin-global/psl.exe)
     if do_pkgConfig "libpsl = 0.21.0" &&
         do_wget -h 41bd1c75a375b85c337b59783f5deb93dbb443fb0a52d257f403df7bd653ee12 \
-        "https://github.com/rockdaboot/libpsl/releases/download/libpsl-0.21.0/libpsl-0.21.0.tar.gz"; then
+        "http://10.1.1.43:8001/archive/libpsl-0.21.0.tar.gz"; then
         do_uninstall "${_check[@]}"
         [[ $standalone == y ]] || sed -ri 's|(bin_PROGRAMS = ).*|\1|g' tools/Makefile.in
         grep_or_sed "Requires.private" libpsl.pc.in "/Libs:/ i\Requires.private: libidn2"
@@ -429,7 +429,7 @@ esac
 [[ $standalone = y || $curl != n ]] && _check+=(bin-global/curl.exe)
 if [[ $mediainfo = y || $bmx = y || $curl != n || $cyanrip = y ]] &&
     do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/curl.git"; then
-    do_patch "https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-curl/0003-libpsl-static-libs.patch"
+    do_patch "http://10.1.1.43:8001/patches/curl.git/0003-libpsl-static-libs.patch"
     do_pacman_install nghttp2
 
     do_uninstall include/curl bin-global/curl-config "${_check[@]}"
@@ -480,7 +480,7 @@ if { { [[ $ffmpeg != no || $standalone = y ]] && enabled libtesseract; } ||
     if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/libtiff.git"; then
         do_pacman_install libjpeg-turbo xz zlib zstd libdeflate
         do_uninstall "${_check[@]}"
-        do_patch "https://gitlab.com/libtiff/libtiff/-/merge_requests/233.patch" am
+        do_patch "http://10.1.1.43:8001/patches/libtiff.git/233.patch" am
         grep_or_sed 'Requires.private' libtiff-4.pc.in \
             '/Libs:/ a\Requires.private: libjpeg liblzma zlib libzstd glut'
         CFLAGS+=" -DFREEGLUT_STATIC" do_cmakeinstall global -D{webp,jbig,UNIX}=OFF
@@ -498,16 +498,6 @@ _check=(libwebp{,mux}.{a,pc})
 if [[ $ffmpeg != no || $standalone = y ]] && enabled libwebp &&
     do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/libwebp"; then
     do_pacman_install giflib
-    #do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/libwebp/0001-WEBP_DEP_LIBRARIES-use-Threads-Threads.patch" am
-    #do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/libwebp/0002-deps.cmake-unroll-img-loop-and-use-import-libraries-.patch" am
-    #do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/libwebp/0003-CMake-link-imageioutil-to-exampleutil-after-defined.patch" am
-    #do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/libwebp/0004-CMake-use-target_include_directories-instead-of-incl.patch" am
-    #do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/libwebp/0005-CMake-use-import-libraries-if-possible-for-vwebp.patch" am
-    #do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/libwebp/0006-CMake-use-import-library-for-SDL-if-available.patch" am
-    #do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/libwebp/0007-CMake-include-src-along-with-binary_dir-src.patch" am
-    #do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/libwebp/0008-CMake-add-WEBP_BUILD_WEBPMUX-to-list-of-checks-for-e.patch" am
-    #do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/libwebp/0009-CMake-add-WEBP_BUILD_WEBPINFO-to-list-of-checks-for-.patch" am
-    #do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/libwebp/0010-deps-use-pkg-config-instead-of-find_package.patch" am
     do_patch "http://10.1.1.43:8001/patches/libwebp/0001-WEBP_DEP_LIBRARIES-use-Threads-Threads.patch" am
     do_patch "http://10.1.1.43:8001/patches/libwebp/0002-deps.cmake-unroll-img-loop-and-use-import-libraries-.patch" am
     do_patch "http://10.1.1.43:8001/patches/libwebp/0003-CMake-link-imageioutil-to-exampleutil-after-defined.patch" am
@@ -618,7 +608,6 @@ _check=(zimg{.h,++.hpp} libzimg.{,l}a zimg.pc)
 if [[ $ffmpeg != no ]] && enabled libzimg &&
     do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/zimg.git"; then
     do_uninstall "${_check[@]}"
-    ##do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/zimg/0001-libm_wrapper-define-__CRT__NO_INLINE-before-math.h.patch" am
 	do_patch "http://10.1.1.43:8001/patches/zimg.git/0001-libm_wrapper-define-__CRT__NO_INLINE-before-math.h.patch" am
     do_autoreconf
     do_separate_confmakeinstall
@@ -770,10 +759,8 @@ if [[ $standalone = y ]] && enabled libopus; then
     _deps=(opus.pc "$MINGW_PREFIX"/lib/pkgconfig/{libssl,ogg}.pc)
     if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/opusfile.git"; then
         do_uninstall "${_check[@]}"
-        ##do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/opusfile/0001-Disable-cert-store-integration-if-OPENSSL_VERSION_NU.patch" am
-        ##do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/opusfile/0002-configure-Only-add-std-c89-if-not-mingw-because-of-c.patch" am
-        do_local_patch "./0001-Disable-cert-store-integration-if-OPENSSL_VERSION_NU.patch" am
-        do_local_patch "./0002-configure-Only-add-std-c89-if-not-mingw-because-of-c.patch" am 
+        do_patch "http://10.1.1.43:8001/patches/opusfile.git/0001-Disable-cert-store-integration-if-OPENSSL_VERSION_NU.patch" am
+        do_patch "http://10.1.1.43:8001/patches/opusfile.git/0002-configure-Only-add-std-c89-if-not-mingw-because-of-c.patch" am 
         do_autogen
         do_separate_confmakeinstall --disable-{examples,doc}
         do_checkIfExist
@@ -834,11 +821,6 @@ if [[ $standalone = y ]] && enabled libmp3lame; then
             "lame-3.100.tar.gz"; then
         do_uninstall include/lame libmp3lame.{l,}a "${_check[@]}"
         _mingw_patches_lame="http://10.1.1.43:8001/patches/lame-3.100"
-        #do_patch "https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-lame/0005-no-gtk.all.patch"
-        #do_patch "https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-lame/0006-dont-use-outdated-symbol-list.patch"
-        #do_patch "https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-lame/0007-revert-posix-code.patch"
-        #do_patch "https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-lame/0008-skip-termcap.patch"
-        #do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/lame/0001-libmp3lame-vector-Makefile.am-Add-msse-to-fix-i686-c.patch"
         do_patch "$_mingw_patches_lame/0005-no-gtk.all.patch"
         do_patch "$_mingw_patches_lame/0006-dont-use-outdated-symbol-list.patch"
         do_patch "$_mingw_patches_lame/0007-revert-posix-code.patch"
@@ -1384,7 +1366,7 @@ if [[ $ffmpeg != no ]] && enabled libzvbi &&
     do_wget_sf -h 95e53eb208c65ba6667fd4341455fa27 \
         "zvbi-0.2.35.tar.bz2"; then
     do_uninstall "${_check[@]}" zvbi-0.2.pc
-    _vlc_zvbi_patches=https://raw.githubusercontent.com/videolan/vlc/master/contrib/src/zvbi
+    _vlc_zvbi_patches=http://10.1.1.43:8001/patches/zvbi
     do_patch "http://10.1.1.43:8001/patches/zvbi/zvbi-win32.patch"
     # added by zvbi-win32.patch above, not needed anymore
     sed -i 's;-lpthreadGC2 -lwsock32;;' zvbi-0.2.pc.in
@@ -1514,7 +1496,6 @@ if [[ $x264 != no ]]; then
         if [[ $standalone = y && $x264 =~ (full|fullv) ]]; then
             _check=("$LOCALDESTDIR"/opt/lightffmpeg/lib/pkgconfig/libav{codec,format}.pc)
             do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/ffmpeg.git"
-            #do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/ffmpeg/0001-get_cabac_inline_x86-Don-t-inline-if-32-bit-clang-on.patch" am
 			do_patch "http://10.1.1.43:8001/patches/ffmpeg.git/0001-get_cabac_inline_x86-Don-t-inline-if-32-bit-clang-on.patch" am
             do_uninstall "$LOCALDESTDIR"/opt/lightffmpeg
             [[ -f config.mak ]] && log "distclean" make distclean
@@ -1701,7 +1682,7 @@ pc_exists x265 && sed -i 's|-lmingwex||g' "$(file_installed x265.pc)"
 _check=(xvid.h libxvidcore.a bin-video/xvid_encraw.exe)
 if enabled libxvid && [[ $standalone = y ]] &&
     do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/xvid.git"; then
-    do_patch "https://github.com/m-ab-s/xvid/compare/lighde.patch" am
+    do_patch "http://10.1.1.43:8001/patches/xvid.git/lighde.patch" am
     do_pacman_remove xvidcore
     do_uninstall "${_check[@]}"
     cd_safe xvidcore/build/generic
@@ -1739,8 +1720,8 @@ fi
 _check=(librist.{a,pc} librist/librist.h)
 [[ $standalone = y ]] && _check+=(bin-global/rist{sender,receiver,2rist,srppasswd}.exe)
 if enabled librist && do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/librist.git"; then
-    do_patch "https://code.videolan.org/1480c1/librist/-/commit/67d4aafc2f580f354846f3e866b350a190539f9b.patch" am
-    do_patch "https://code.videolan.org/rist/librist/-/merge_requests/176.patch" am
+    do_patch "http://10.1.1.43:8001/patches/librist.git/67d4aafc2f580f354846f3e866b350a190539f9b.patch" am
+    do_patch "http://10.1.1.43:8001/patches/librist.git/176.patch" am
     do_uninstall include/librist "${_check[@]}"
     extracommands=("-Ddisable_json=true")
     [[ $standalone = y ]] || extracommands+=("-Dbuilt_tools=false")
@@ -1819,7 +1800,7 @@ if [[ $ffmpeg != no ]] && enabled liblensfun &&
     grep_or_sed liconv "$MINGW_PREFIX/lib/pkgconfig/glib-2.0.pc" 's;-lintl;& -liconv;g'
     grep_or_sed Libs.private libs/lensfun/lensfun.pc.cmake '/Libs:/ a\Libs.private: -lstdc++'
     do_uninstall "bin-video/lensfun" "${_check[@]}"
-    do_patch "https://github.com/m-ab-s/mabs-patches/raw/master/lensfun/0001-CMake-exclude-mingw-w64-from-some-msvc-exclusive-thi.patch"
+    do_patch "http://10.1.1.43:8001/patches/lensfun.git/0001-CMake-exclude-mingw-w64-from-some-msvc-exclusive-thi.patch"
     CFLAGS+=" -DGLIB_STATIC_COMPILATION" CXXFLAGS+=" -DGLIB_STATIC_COMPILATION" \
         do_cmakeinstall -DBUILD_STATIC=on -DBUILD_{TESTS,LENSTOOL,DOC}=off \
         -DINSTALL_HELPER_SCRIPTS=off -DCMAKE_INSTALL_DATAROOTDIR="$LOCALDESTDIR/bin-video"
@@ -1831,11 +1812,11 @@ _check=(bin-video/vvc/{Encoder,Decoder}App.exe)
 if [[ $bits = 64bit && $vvc = y ]] &&
     do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/VVCSoftware_VTM.git" vvc; then
     do_uninstall bin-video/vvc
-    do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/VVCSoftware_VTM/0001-BBuildEnc.cmake-Remove-Werror-for-gcc-and-clang.patch" am
+    do_patch "http://10.1.1.43:8001/patches/VVCSoftware_VTM.git/0001-BBuildEnc.cmake-Remove-Werror-for-gcc-and-clang.patch" am
     # patch for easier install of apps
     # probably not of upstream's interest because of how experimental the codec is
-    do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/VVCSoftware_VTM/0002-cmake-allow-installing-apps.patch" am
-    do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/VVCSoftware_VTM/0003-CMake-add-USE_CCACHE-variable-to-disable-using-found.patch" am
+    do_patch "http://10.1.1.43:8001/patches/VVCSoftware_VTM.git/0002-cmake-allow-installing-apps.patch" am
+    do_patch "http://10.1.1.43:8001/patches/VVCSoftware_VTM.git/0003-CMake-add-USE_CCACHE-variable-to-disable-using-found.patch" am
     _notrequired=true
     # install to own dir because the binaries' names are too generic
     do_cmakeinstall -DCMAKE_INSTALL_BINDIR="$LOCALDESTDIR"/bin-video/vvc \
@@ -1857,12 +1838,12 @@ fi
 _check=(libvulkan.a vulkan.pc vulkan/vulkan.h d3d{kmthk,ukmdt}.h)
 if { { [[ $ffmpeg != no ]] && enabled vulkan; } || ! mpv_disabled vulkan; } &&
     do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/Vulkan-Loader.git" vulkan-loader; then
-    _DeadSix27=https://raw.githubusercontent.com/DeadSix27/python_cross_compile_script/master
-    _mabs=https://raw.githubusercontent.com/m-ab-s/mabs-patches/master
-    _shinchiro=https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master
+    _DeadSix27=http://10.1.1.43:8001/patches/Vulkan-Loader.git
+    _mabs=http://10.1.1.43:8001/patches/Vulkan-Loader.git
+    _shinchiro=http://10.1.1.43:8001/patches/Vulkan-Loader.git
     do_uninstall "${_check[@]}"
-    do_patch "$_mabs/vulkan-loader/0001-loader-cross-compile-static-linking-hacks.patch" am
-    do_patch "$_mabs/vulkan-loader/0002-loader-vulkan.pc.in-use-the-normal-prefix-and-exec_p.patch" am
+    do_patch "$_mabs/0001-loader-cross-compile-static-linking-hacks.patch" am
+    do_patch "$_mabs/0002-loader-vulkan.pc.in-use-the-normal-prefix-and-exec_p.patch" am
     grep_and_sed VULKAN_LIB_SUFFIX loader/vulkan.pc.in \
             's/@VULKAN_LIB_SUFFIX@//'
     create_build_dir
@@ -1977,14 +1958,14 @@ if [[ $ffmpeg != no ]]; then
         do_changeFFmpegConfig "$license"
         [[ -f ffmpeg_extra.sh ]] && source ffmpeg_extra.sh
 
-        do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/ffmpeg/0001-get_cabac_inline_x86-Don-t-inline-if-32-bit-clang-on.patch" am
+        do_patch "http://10.1.1.43:8001/patches/ffmpeg.git/0001-get_cabac_inline_x86-Don-t-inline-if-32-bit-clang-on.patch" am
 
         if enabled libsvthevc; then
-            do_patch "https://raw.githubusercontent.com/OpenVisualCloud/SVT-HEVC/master/ffmpeg_plugin/master-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch" am ||
+            do_patch "http://10.1.1.43:8001/patches/ffmpeg.git/master-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch" am ||
                 do_removeOption --enable-libsvthevc
         fi
         if enabled libsvtvp9; then
-            do_patch "https://raw.githubusercontent.com/OpenVisualCloud/SVT-VP9/master/ffmpeg_plugin/master-0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch" am ||
+            do_patch "http://10.1.1.43:8001/patches/ffmpeg.git/master-0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch" am ||
                 do_removeOption --enable-libsvtvp9
         fi
 
@@ -1993,8 +1974,8 @@ if [[ $ffmpeg != no ]]; then
         enabled libsvtvp9 || do_removeOption FFMPEG_OPTS_SHARED "--enable-libsvtvp9"
 
         enabled vapoursynth && {
-            do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/ffmpeg/0001-Add-Alternative-VapourSynth-demuxer.patch" am
-            do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/ffmpeg/0002-vapoursynth_alt-use-atomic_int-for-async_pending.patch" am
+            do_patch "http://10.1.1.43:8001/patches/ffmpeg.git/0001-Add-Alternative-VapourSynth-demuxer.patch" am
+            do_patch "http://10.1.1.43:8001/patches/ffmpeg.git/0002-vapoursynth_alt-use-atomic_int-for-async_pending.patch" am
         }
 
         if enabled openal &&
@@ -2011,7 +1992,7 @@ if [[ $ffmpeg != no ]]; then
 
         if [[ ${#FFMPEG_OPTS[@]} -gt 35 ]]; then
             # remove redundant -L and -l flags from extralibs
-            do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/ffmpeg/0001-configure-deduplicate-linking-flags.patch" am
+            do_patch "http://10.1.1.43:8001/patches/ffmpeg.git/0001-configure-deduplicate-linking-flags.patch" am
         fi
 
         _patches=$(git rev-list origin/master.. --count)
@@ -2209,9 +2190,9 @@ if [[ $mpv != n ]] && pc_exists libavcodec libavformat libswscale libavfilter; t
         do_pacman_remove luajit lua51
         do_uninstall include/luajit-2.1 lib/lua "${_check[@]}"
         [[ -f src/luajit.exe ]] && log "clean" make clean
-        do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/LuaJIT/0001-Add-win32-UTF-8-filesystem-functions.patch" am
-        do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/LuaJIT/0002-win32-UTF-8-Remove-va-arg-and-.-and-unused-functions.patch" am
-        do_patch "https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-luajit/002-fix-pkg-config-file.patch"
+        do_patch "http://10.1.1.43:8001/patches/LuaJIT.git/0001-Add-win32-UTF-8-filesystem-functions.patch" am
+        do_patch "http://10.1.1.43:8001/patches/LuaJIT.git/0002-win32-UTF-8-Remove-va-arg-and-.-and-unused-functions.patch" am
+        do_patch "http://10.1.1.43:8001/patches/LuaJIT.git/002-fix-pkg-config-file.patch"
         sed -i "s|export PREFIX= /usr/local|export PREFIX=${LOCALDESTDIR}|g" Makefile
         sed -i "s|^prefix=.*|prefix=$LOCALDESTDIR|" etc/luajit.pc
         _luajit_args=("PREFIX=$LOCALDESTDIR" "INSTALL_BIN=$LOCALDESTDIR/bin-global" "INSTALL_TNAME=luajit.exe")
@@ -2293,10 +2274,10 @@ if [[ $mpv != n ]] && pc_exists libavcodec libavformat libswscale libavfilter; t
             fi
         }
 
-        add_third_party "https://github.com/KhronosGroup/glslang.git"
-        add_third_party "https://github.com/KhronosGroup/SPIRV-Tools.git" spirv-tools
-        add_third_party "https://github.com/KhronosGroup/SPIRV-Headers.git" spirv-headers
-        add_third_party "https://github.com/KhronosGroup/SPIRV-Cross.git" spirv-cross
+        add_third_party "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/glslang.git"
+        add_third_party "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/SPIRV-Tools.git" spirv-tools
+        add_third_party "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/SPIRV-Headers.git" spirv-headers
+        add_third_party "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/SPIRV-Cross.git" spirv-cross
 
         # fix python indentation errors from non-existant code review
         grep -ZRlP --include="*.py" '\t' third_party/spirv-tools/ | xargs -r -0 -n1 sed -i 's;\t;    ;g'
@@ -2314,7 +2295,7 @@ if [[ $mpv != n ]] && pc_exists libavcodec libavformat libswscale libavfilter; t
     if ! mpv_disabled spirv-cross &&
         do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/SPIRV-Cross.git"; then
         do_uninstall include/spirv_cross "${_check[@]}" spirv-cross-c-shared.pc libspirv-cross-c-shared.a
-        do_patch "https://github.com/KhronosGroup/SPIRV-Cross/compare/master...taisei-project:meson.patch meson.patch" am
+        do_patch "http://10.1.1.43:8001/patches/SPIRV-Cross.git/master...taisei-project:meson.patch meson.patch" am
         do_mesoninstall
         do_checkIfExist
     fi
@@ -2322,7 +2303,7 @@ if [[ $mpv != n ]] && pc_exists libavcodec libavformat libswscale libavfilter; t
     _check=(libplacebo.{a,pc})
     _deps=(lib{vulkan,shaderc_combined}.a)
     if ! mpv_disabled libplacebo &&
-        do_vcs "https://code.videolan.org/videolan/libplacebo.git"; then
+        do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/libplacebo.git"; then
         do_pacman_install python-mako
         do_uninstall "${_check[@]}"
         do_mesoninstall -Dvulkan-registry="$LOCALDESTDIR/share/vulkan/registry/vk.xml" -Ddemos=false
@@ -2430,7 +2411,7 @@ if [[ $bmx = y ]]; then
 
     _check=(bin-video/MXFDump.exe libMXF-1.0.{{,l}a,pc})
     if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/libmxf.git" libMXF-1.0; then
-        do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/libmxf/0001-Add-spaces-between-quotes-and-literal.patch" am
+        do_patch "http://10.1.1.43:8001/patches/libmxf.git/0001-Add-spaces-between-quotes-and-literal.patch" am
         do_autogen
         do_uninstall include/libMXF-1.0 "${_check[@]}"
         do_separate_confmakeinstall video --disable-examples
@@ -2547,9 +2528,9 @@ if [[ $vlc == y ]]; then
     _check=("$DXSDK_DIR/fxc2.exe" "$DXSDK_DIR/d3dcompiler_47.dll")
     if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/fxc2.git"; then
         do_uninstall "${_check[@]}"
-        do_patch "https://code.videolan.org/videolan/vlc/-/raw/master/contrib/src/fxc2/0001-make-Vn-argument-as-optional-and-provide-default-var.patch" am
-        do_patch "https://code.videolan.org/videolan/vlc/-/raw/master/contrib/src/fxc2/0002-accept-windows-style-flags-and-splitted-argument-val.patch" am
-        do_patch "https://code.videolan.org/videolan/vlc/-/raw/master/contrib/src/fxc2/0004-Revert-Fix-narrowing-conversion-from-int-to-BYTE.patch" am
+        do_patch "http://10.1.1.43:8001/patches/fxc2.git/0001-make-Vn-argument-as-optional-and-provide-default-var.patch" am
+        do_patch "http://10.1.1.43:8001/patches/fxc2.git/0002-accept-windows-style-flags-and-splitted-argument-val.patch" am
+        do_patch "http://10.1.1.43:8001/patches/fxc2.git/0004-Revert-Fix-narrowing-conversion-from-int-to-BYTE.patch" am
         $CXX $CFLAGS -static -static-libgcc -static-libstdc++ -o "$DXSDK_DIR/fxc2.exe" fxc2.cpp -ld3dcompiler $LDFLAGS
         case $bits in
         32*) cp -f "dll/d3dcompiler_47_32.dll" "$DXSDK_DIR/d3dcompiler_47.dll" ;;
@@ -2584,16 +2565,16 @@ if [[ $vlc == y ]]; then
     export QMAKE_CXX=$CXX QMAKE_CC=$CC
     export MSYS2_ARG_CONV_EXCL="--foreign-types="
     _check=(bin/qmake.exe Qt5Core.pc Qt5Gui.pc Qt5Widgets.pc)
-    if do_vcs "https://github.com/qt/qtbase.git#branch=${_qt_version:=5.15}"; then
+    if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/qtbase.git#branch=${_qt_version:=5.15}"; then
         do_uninstall include/QtCore share/mkspecs "${_check[@]}"
         # Enable ccache on !unix and use cygpath to fix certain issues
-        do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/qtbase/0001-qtbase-mabs.patch" am
-        do_patch "https://code.videolan.org/videolan/vlc/-/raw/master/contrib/src/qt/0003-allow-cross-compilation-of-angle-with-wine.patch" am
-        do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/qtbase/0003-Remove-wine-prefix-before-fxc2.patch" am
-        do_patch "https://code.videolan.org/videolan/vlc/-/raw/master/contrib/src/qt/0006-ANGLE-don-t-use-msvc-intrinsics-when-crosscompiling-.patch" am
-        do_patch "https://code.videolan.org/videolan/vlc/-/raw/master/contrib/src/qt/0009-Add-KHRONOS_STATIC-to-allow-static-linking-on-Windows.patch" am
-        do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/qtbase/0006-qt_module.prf-don-t-create-libtool-if-not-unix.patch" am
-        do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/qtbase/0007-qmake-Patch-win32-g-for-static-builds.patch" am
+        do_patch "http://10.1.1.43:8001/patches/qtbase.git/0001-qtbase-mabs.patch" am
+        do_patch "http://10.1.1.43:8001/patches/qtbase.git/0003-allow-cross-compilation-of-angle-with-wine.patch" am
+        do_patch "http://10.1.1.43:8001/patches/qtbase.git/0003-Remove-wine-prefix-before-fxc2.patch" am
+        do_patch "http://10.1.1.43:8001/patches/qtbase.git/0006-ANGLE-don-t-use-msvc-intrinsics-when-crosscompiling-.patch" am
+        do_patch "http://10.1.1.43:8001/patches/qtbase.git/0009-Add-KHRONOS_STATIC-to-allow-static-linking-on-Windows.patch" am
+        do_patch "http://10.1.1.43:8001/patches/qtbase.git/0006-qt_module.prf-don-t-create-libtool-if-not-unix.patch" am
+        do_patch "http://10.1.1.43:8001/patches/qtbase.git/0007-qmake-Patch-win32-g-for-static-builds.patch" am
         cp -f src/3rdparty/angle/src/libANGLE/{,libANGLE}Debug.cpp
         grep_and_sed "src/libANGLE/Debug.cpp" src/angle/src/common/gles_common.pri \
             "s#src/libANGLE/Debug.cpp#src/libANGLE/libANGLEDebug.cpp#g"
@@ -2647,9 +2628,9 @@ EOF
 
     _deps=(Qt5Core.pc)
     _check=(Qt5Quick.pc Qt5Qml.pc)
-    if do_vcs "https://github.com/qt/qtdeclarative.git#branch=$_qt_version"; then
+    if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/qtdeclarative.git#branch=$_qt_version"; then
         do_uninstall "${_check[@]}"
-        do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/qtdeclarative/0001-features-hlsl_bytecode_header.prf-Use-DXSDK_DIR-for-.patch" am
+        do_patch "http://10.1.1.43:8001/patches/qtdeclarative.git/0001-features-hlsl_bytecode_header.prf-Use-DXSDK_DIR-for-.patch" am
         git cherry-pick 0b9fcb829313d0eaf2b496bf3ad44e5628fa43b2 > /dev/null 2>&1 ||
             git cherry-pick --abort
         do_qmake
@@ -2663,7 +2644,7 @@ EOF
 
     _deps=(Qt5Core.pc)
     _check=(Qt5Svg.pc)
-    if do_vcs "https://github.com/qt/qtsvg.git#branch=$_qt_version"; then
+    if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/qtsvg.git#branch=$_qt_version"; then
         do_uninstall "${_check[@]}"
         do_qmake
         do_makeinstall
@@ -2674,7 +2655,7 @@ EOF
 
     _deps=(Qt5Core.pc Qt5Quick.pc Qt5Qml.pc)
     _check=("$LOCALDESTDIR/qml/QtGraphicalEffects/libqtgraphicaleffectsplugin.a")
-    if do_vcs "https://github.com/qt/qtgraphicaleffects.git#branch=$_qt_version"; then
+    if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/qtgraphicaleffects.git#branch=$_qt_version"; then
         do_uninstall "${_check[@]}"
         do_qmake
         do_makeinstall
@@ -2685,7 +2666,7 @@ EOF
 
     _deps=(Qt5Core.pc Qt5Quick.pc Qt5Qml.pc)
     _check=(Qt5QuickControls2.pc)
-    if do_vcs "https://github.com/qt/qtquickcontrols2.git#branch=$_qt_version"; then
+    if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/qtquickcontrols2.git#branch=$_qt_version"; then
         do_uninstall "${_check[@]}"
         do_qmake
         do_makeinstall
@@ -2721,7 +2702,7 @@ EOF
     _check=(pixman-1.pc libpixman-1.a pixman-1/pixman.h)
     if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/pixman.git"; then
         do_uninstall include/pixman-1 "${_check[@]}"
-        do_patch "https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/pixman/0001-pixman-pixman-mmx-fix-redefinition-of-_mm_mulhi_pu16.patch" am
+        do_patch "http://10.1.1.43:8001/patches/pixman.git/0001-pixman-pixman-mmx-fix-redefinition-of-_mm_mulhi_pu16.patch" am
         NOCONFIGURE=y do_autogen
         CFLAGS="-msse2 -mfpmath=sse -mstackrealign $CFLAGS" \
             do_separate_confmakeinstall
@@ -2763,8 +2744,8 @@ EOF
             "$LOCALDESTDIR"/vlc/include/vlc/libvlc_version.h)
     if do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows/vlc.git"; then
         do_uninstall bin/plugins lib/vlc "${_check[@]}"
-        _mabs_vlc=https://raw.githubusercontent.com/m-ab-s/mabs-patches/master/vlc
-        do_patch "https://code.videolan.org/videolan/vlc/-/merge_requests/155.patch" am
+		_mabs_vlc=http://10.1.1.43:8001/patches/vlc.git
+        do_patch "http://10.1.1.43:8001/patches/vlc.git/155.patch" am
         do_patch "$_mabs_vlc/0001-modules-access-srt-Use-srt_create_socket-instead-of-.patch" am
         do_patch "$_mabs_vlc/0002-modules-codec-libass-Use-ass_set_pixel_aspect-instea.patch" am
         do_patch "$_mabs_vlc/0003-Use-libdir-for-plugins-on-msys2.patch" am
@@ -2798,7 +2779,7 @@ EOF
 fi
 
 _check=(bin-video/ffmbc.exe)
-if [[ $ffmbc = y ]] && do_vcs "https://github.com/bcoudurier/FFmbc.git#branch=ffmbc"; then # no other branch
+if [[ $ffmbc = y ]] && do_vcs "ssh://gitUserYxling@10.1.1.43/volume2/gitRepos/ffmpeg_compile_windows#branch=ffmbc"; then # no other branch
     _notrequired=true
     create_build_dir
     log configure ../configure --target-os=mingw32 --enable-gpl \
