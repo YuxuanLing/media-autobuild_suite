@@ -145,7 +145,7 @@ set mpv_options_basic=--disable-debug-build "--lua=luajit"
 set mpv_options_full=dvdnav cdda #egl-angle #html-build ^
 #pdf-build libmpv-shared openal sdl2 #sdl2-gamepad #sdl2-audio #sdl2-video
 
-set iniOptions=arch license2 vpx2 x2643 x2652 other265 flac fdkaac mediainfo ^
+set iniOptions=arch buildtoolsUp license2 vpx2 x2643 x2652 other265 flac fdkaac mediainfo ^
 soxB ffmpegB2 ffmpegUpdate ffmpegChoice mp4box rtmpdump mplayer2 mpv cores deleteSource ^
 strip pack logging bmx standalone updateSuite aom faac exhale ffmbc curl cyanrip2 redshift ^
 rav1e ripgrep dav1d libavif vvc jq dssim avs2 timeStamp noMintty ccache svthevc svtav1 svtvp9 xvc ^
@@ -191,6 +191,31 @@ if %buildEnv%==2 set "build32=yes" && set "build64=no"
 if %buildEnv%==3 set "build32=no" && set "build64=yes"
 if %buildEnv% GTR 3 GOTO selectSystem
 if %deleteINI%==1 echo.arch=^%buildEnv%>>%ini%
+
+
+:buildtoolsUpSelect
+if %buildtoolsUpINI%==0 (
+    echo -------------------------------------------------------------------------------
+    echo -------------------------------------------------------------------------------
+    echo.
+    echo. Need to update building tools:
+    echo. 1 = Yes
+    echo. 2 = No
+    echo.
+    echo. If you have downloaded build system and sure no need update it select 2 
+    echo. then select 1
+    echo.
+    echo -------------------------------------------------------------------------------
+    echo -------------------------------------------------------------------------------
+    set /P buildtoolsUpdate="Build Tools Update: "
+) else set buildtoolsUpdate=%buildtoolsUpINI%
+
+if "%buildtoolsUpdate%"=="" GOTO buildtoolsUpSelect
+if %buildtoolsUpdate%==1 set "buildtoolsUp=y"
+if %buildtoolsUpdate%==2 set "buildtoolsUp=n"
+if %deleteINI%==1 echo.buildtoolsUp=^%buildtoolsUpdate%>>%ini%
+
+
 
 :ffmpeglicense
 if %license2INI%==0 (
@@ -1630,7 +1655,13 @@ if %updateSuite%==y (
 
 rem update
 rem TODO: add some check here , not need this every time 
-rem call :runBash update.log /build/media-suite_update.sh --build32=%build32% --build64=%build64%
+if  %buildtoolsUp%==y (
+     call :runBash update.log /build/media-suite_update.sh --build32=%build32% --build64=%build64%
+) else (
+     echo -------------------------------------------------------------------------------
+     echo. WARNING: You have selected not to update the building Tools !!
+     echo -------------------------------------------------------------------------------
+)
 
 if exist "%build%\update_core" (
     echo.-------------------------------------------------------------------------------
