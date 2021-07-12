@@ -70,6 +70,7 @@ while true; do
     --svtvp9=* ) svtvp9=${1#*=} && shift ;;
     --xvc=* ) xvc=${1#*=} && shift ;;
     --vlc=* ) vlc=${1#*=} && shift ;;
+    --buildtoolsUp=* ) buildtoolsUp=${1#*=} && shift ;;
     -- ) shift && break ;;
     -* ) echo "Error, unknown option: '$1'." && exit 1 ;;
     * ) break ;;
@@ -175,7 +176,11 @@ if [[ $ripgrep = y || $rav1e = y || $dssim = y || $libavif = y ]] || enabled lib
             install "stable-$CARCH-pc-windows-gnu"
     fi
     ## TODO: not need rustup_update here each time 
-    ## log rustup_update "$RUSTUP_HOME/bin/rustup.exe" update
+    if [[ $buildtoolsUp = y ]]; then
+    	log rustup_update "$RUSTUP_HOME/bin/rustup.exe" update
+	else 
+	    do_simple_print -p "${orange}Warning: We will not to call rustup to do update since you selected not to update build tools !"
+	fi
     log set_default_toolchain "$RUSTUP_HOME/bin/rustup.exe" default \
         "stable-$CARCH-pc-windows-gnu"
 fi
