@@ -17,6 +17,56 @@ CARCH=x86_64
 
 
 
+do_wget_local() {
+    local nocd=false norm=false quiet=false notmodified=false hash
+    while true; do
+        case $1 in
+        -c) nocd=true && shift ;;
+        -r) norm=true && shift ;;
+        -q) quiet=true && shift ;;
+        -h) hash="$2" && shift 2 ;;
+        -z) notmodified=true && shift ;;
+        --)
+            shift
+            break
+            ;;
+        *) break ;;
+        esac
+    done
+    local url="$1" archive="$2" dirName="$3"
+    if [[ -z $archive ]]; then
+        # remove arguments and filepath
+        archive=${url%%\?*}
+        archive=${archive##*/}
+    fi
+		
+    if [[ ! -f $url ]]; then
+	    printf '%b\n' "${orange}${url}${reset}" \
+                '\tFile not found on local.'
+		do_prompt "Will do nothing , if you're sure nothing depends on it."
+        return 1
+    fi
+	
+    [[ -z $dirName ]] && dirName=$(guess_dirname "$archive")
+    $nocd || cd_safe "$LOCALBUILDDIR"	
+	cp -f "$url" "$PWD"/"$archive"
+ 	
+    if [[ -f $archive ]] && [[ $hash ]] && check_hash "$archive" "$hash"; then
+        $quiet || do_print_status prefix "${bold}├${reset} " "${dirName:-$archive}" "$green" "File up-to-date"
+    fi
+
+    $norm || add_to_remove "$(pwd)/$archive"
+    do_extract "$archive" "$dirName"
+    ! $norm && [[ -n $dirName ]] && ! $nocd && add_to_remove
+    return 0
+}
+
+
+# do_wget_local -h ba804bb1ce5c71dd484a102a5b27d0dd "/d/work/ffmpeg_build_windows/archive/test.zip"
+
+
+
+
 # get wget download
 do_wget_test() {
     local nocd=false norm=false quiet=false notmodified=false hash
@@ -35,6 +85,7 @@ do_wget_test() {
         esac
     done
     local url="$1" archive="$2" dirName="$3" response_code=000 curlcmds=("${curl_opts[@]}") tries=1 temp_file
+	printf "in do_wget_test url: $url \n"
     if [[ -z $archive ]]; then
         # remove arguments and filepath
         archive=${url%%\?*}
@@ -101,7 +152,10 @@ do_wget_test() {
     [[ -z $response_code || $response_code != "304" ]] && return 0
 }
 
-
+apache_ant_ver=$(clean_html_index "https://www.apache.org/dist/ant/binaries/")
+apache_ant_ver=$(get_last_version "$apache_ant_ver" "apache-ant" "1\.\d+\.\d+")
+printf "apache_ant_ver: $apache_ant_ver \n"
+## do_wget_test -r -c "https://www.apache.org/dist/ant/binaries/apache-ant-${apache_ant_ver:-1.10.6}-bin.zip"  apache-ant.zip;
 
 
 do_patch_test() {
@@ -160,8 +214,8 @@ do_patch_test() {
     return 1
 }
 
+##do_patch_test "/d/work/ffmpeg_build_windows/patches/libtiff.git/233.patch" am
 
-do_patch_test "/d/work/ffmpeg_build_windows/patches/libtiff.git/233.patch" am
 pause 'Compile finish, Press [Enter] key to exit...'
 
 :<<!

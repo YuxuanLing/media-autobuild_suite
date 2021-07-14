@@ -350,6 +350,56 @@ check_hash() {
     fi
 }
 
+
+# get local machine file
+do_wget_local() {
+    local nocd=false norm=false quiet=false notmodified=false hash
+    while true; do
+        case $1 in
+        -c) nocd=true && shift ;;
+        -r) norm=true && shift ;;
+        -q) quiet=true && shift ;;
+        -h) hash="$2" && shift 2 ;;
+        -z) notmodified=true && shift ;;
+        --)
+            shift
+            break
+            ;;
+        *) break ;;
+        esac
+    done
+    local url="$1" archive="$2" dirName="$3"
+    if [[ -z $archive ]]; then
+        # remove arguments and filepath
+        archive=${url%%\?*}
+        archive=${archive##*/}
+    fi
+		
+    if [[ ! -f $url ]]; then
+	    printf '%b\n' "${orange}${url}${reset}" \
+                '\tFile not found on local.'
+		do_prompt "Will do nothing , if you're sure nothing depends on it."
+        return 1
+    fi
+	
+    [[ -z $dirName ]] && dirName=$(guess_dirname "$archive")
+    $nocd || cd_safe "$LOCALBUILDDIR"	
+	cp -f "$url" "$PWD"/"$archive"
+ 	
+    if [[ -f $archive ]] && [[ $hash ]] && check_hash "$archive" "$hash"; then
+        $quiet || do_print_status prefix "${bold}├${reset} " "${dirName:-$archive}" "$green" "File up-to-date"
+    fi
+
+    $norm || add_to_remove "$(pwd)/$archive"
+    do_extract "$archive" "$dirName"
+    ! $norm && [[ -n $dirName ]] && ! $nocd && add_to_remove
+    return 0
+}
+
+
+
+
+
 # get wget download
 do_wget() {
     local nocd=false norm=false quiet=false notmodified=false hash

@@ -151,8 +151,8 @@ do_simple_print -p '\n\t'"${orange}Starting $bits compilation of global tools${r
 
 if [[ $packing = y &&
     ! "$(/opt/bin/upx -V 2> /dev/null | head -1)" = "upx 3.96" ]] &&
-    do_wget -h 014912ea363e2d491587534c1e7efd5bc516520d8f2cdb76bb0aaf915c5db961 \
-        "https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win32.zip"; then
+    do_wget_local -h 014912ea363e2d491587534c1e7efd5bc516520d8f2cdb76bb0aaf915c5db961 \
+        "/d/work/ffmpeg_build_windows/archive/upx-3.96-win32.zip"; then
     do_install upx.exe /opt/bin/upx.exe
 fi
 
@@ -342,8 +342,8 @@ fi
 _check=(libgnutls.{,l}a gnutls.pc)
 if enabled_any gnutls librtmp || [[ $rtmpdump = y || $curl = gnutls ]] &&
     do_pkgConfig "gnutls = 3.6.13" &&
-    do_wget -h 32041df447d9f4644570cf573c9f60358e865637d69b7e59d1159b7240b52f38 \
-    "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/gnutls-3.6.13.tar.xz"; then
+    do_wget_local -h 32041df447d9f4644570cf573c9f60358e865637d69b7e59d1159b7240b52f38 \
+    "/d/work/ffmpeg_build_windows/archive/gnutls-3.6.13.tar.xz"; then
         do_pacman_install nettle
         do_uninstall include/gnutls "${_check[@]}"
         grep_or_sed crypt32 lib/gnutls.pc.in 's/Libs.private.*/& -lcrypt32/'
@@ -384,8 +384,8 @@ if [[ $mediainfo = y || $bmx = y || $curl != n ]]; then
     _check=(libidn2.{{,l}a,pc} idn2.h)
     [[ $standalone == y ]] && _check+=(bin-global/idn2.exe)
     if do_pkgConfig "libidn2 = 2.3.0" &&
-        do_wget -h e1cb1db3d2e249a6a3eb6f0946777c2e892d5c5dc7bd91c74394fc3a01cab8b5 \
-        "https://ftp.gnu.org/gnu/libidn/libidn2-2.3.0.tar.gz"; then
+        do_wget_local -h e1cb1db3d2e249a6a3eb6f0946777c2e892d5c5dc7bd91c74394fc3a01cab8b5 \
+        "/d/work/ffmpeg_build_windows/archive/libidn2-2.3.0.tar.gz"; then
         do_uninstall "${_check[@]}"
         [[ $standalone == y ]] || sed -ri 's|(bin_PROGRAMS = ).*|\1|g' src/Makefile.in
         # unistring also depends on iconv
@@ -398,8 +398,8 @@ if [[ $mediainfo = y || $bmx = y || $curl != n ]]; then
     _check=(libpsl.{{,l}a,h,pc})
     [[ $standalone == y ]] && _check+=(bin-global/psl.exe)
     if do_pkgConfig "libpsl = 0.21.0" &&
-        do_wget -h 41bd1c75a375b85c337b59783f5deb93dbb443fb0a52d257f403df7bd653ee12 \
-        "https://github.com/rockdaboot/libpsl/releases/download/libpsl-0.21.0/libpsl-0.21.0.tar.gz"; then
+        do_wget_local -h 41bd1c75a375b85c337b59783f5deb93dbb443fb0a52d257f403df7bd653ee12 \
+        "/d/work/ffmpeg_build_windows/archive/libpsl-0.21.0.tar.gz"; then
         do_uninstall "${_check[@]}"
         [[ $standalone == y ]] || sed -ri 's|(bin_PROGRAMS = ).*|\1|g' tools/Makefile.in
         grep_or_sed "Requires.private" libpsl.pc.in "/Libs:/ i\Requires.private: libidn2"
@@ -817,9 +817,9 @@ if [[ $standalone = y ]] && enabled libmp3lame; then
     if files_exist "${_check[@]}" &&
         grep -q "3.100" "$LOCALDESTDIR/bin-audio/lame.exe"; then
         do_print_status "lame 3.100" "$green" "Up-to-date"
-    elif do_wget_sf \
+    elif do_wget_local \
             -h ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e \
-            "lame-3.100.tar.gz"; then
+            "/d/work/ffmpeg_build_windows/archive/lame-3.100.tar.gz"; then
         do_uninstall include/lame libmp3lame.{l,}a "${_check[@]}"
         _mingw_patches_lame="/d/work/ffmpeg_build_windows/patches/lame-3.100"
         do_patch "$_mingw_patches_lame/0005-no-gtk.all.patch"
@@ -838,8 +838,8 @@ fi
 
 _check=(libgme.{a,pc})
 if [[ $ffmpeg != no ]] && enabled libgme && do_pkgConfig "libgme = 0.6.3" &&
-    do_wget -h aba34e53ef0ec6a34b58b84e28bf8cfbccee6585cebca25333604c35db3e051d \
-        "https://bitbucket.org/mpyne/game-music-emu/downloads/game-music-emu-0.6.3.tar.xz"; then
+    do_wget_local -h aba34e53ef0ec6a34b58b84e28bf8cfbccee6585cebca25333604c35db3e051d \
+        "/d/work/ffmpeg_build_windows/archive/game-music-emu-0.6.3.tar.xz"; then
     do_uninstall include/gme "${_check[@]}"
     do_cmakeinstall -DENABLE_UBSAN=OFF
     do_checkIfExist
@@ -847,7 +847,7 @@ fi
 
 _check=(libbs2b.{{l,}a,pc})
 if [[ $ffmpeg != no ]] && enabled libbs2b && do_pkgConfig "libbs2b = 3.1.0" &&
-    do_wget_sf -h c1486531d9e23cf34a1892ec8d8bfc06 "libbs2b-3.1.0.tar.bz2"; then
+    do_wget_local -h c1486531d9e23cf34a1892ec8d8bfc06 "/d/work/ffmpeg_build_windows/archive/libbs2b-3.1.0.tar.bz2"; then
     do_uninstall include/bs2b "${_check[@]}"
     # sndfile check is disabled since we don't compile binaries anyway
     /usr/bin/grep -q sndfile configure && sed -i '20119,20133d' configure
@@ -866,7 +866,7 @@ fi
 _check=(bin-audio/sox.exe sox.pc)
 _deps=(libsndfile.a opus.pc "$MINGW_PREFIX"/lib/libmp3lame.a)
 if [[ $sox = y ]] && do_pkgConfig "sox = 14.4.2" &&
-    do_wget_sf -h ba804bb1ce5c71dd484a102a5b27d0dd "sox-14.4.2.tar.bz2"; then
+    do_wget_local -h ba804bb1ce5c71dd484a102a5b27d0dd "/d/work/ffmpeg_build_windows/archive/sox-14.4.2.tar.bz2"; then
     do_patch "/d/work/ffmpeg_build_windows/patches/sox/0001-sox_version-fold-function-into-sox_version_info.patch"
     do_pacman_install libmad
     do_uninstall sox.{pc,h} bin-audio/{soxi,play,rec}.exe libsox.{l,}a "${_check[@]}"
@@ -928,8 +928,8 @@ fi
 _check=(shine/layer3.h libshine.{,l}a shine.pc)
 [[ $standalone = y ]] && _check+=(bin-audio/shineenc.exe)
 if enabled libshine && do_pkgConfig "shine = 3.1.1" &&
-    do_wget_sf -h 58e61e70128cf73f88635db495bfc17f0dde3ce9c9ac070d505a0cd75b93d384 \
-        "shine-3.1.1.tar.gz"; then
+    do_wget_local -h 58e61e70128cf73f88635db495bfc17f0dde3ce9c9ac070d505a0cd75b93d384 \
+        "/d/work/ffmpeg_build_windows/archive/shine-3.1.1.tar.gz"; then
     do_uninstall "${_check[@]}"
     [[ $standalone = n ]] && sed -i '/bin_PROGRAMS/,+4d' Makefile.am
     # fix out-of-root build
@@ -1364,8 +1364,8 @@ fi
 _check=(libzvbi.{h,{l,}a} zvbi-0.2.pc)
 if [[ $ffmpeg != no ]] && enabled libzvbi &&
     do_pkgConfig "zvbi-0.2 = 0.2.35" &&
-    do_wget_sf -h 95e53eb208c65ba6667fd4341455fa27 \
-        "zvbi-0.2.35.tar.bz2"; then
+    do_wget_local -h 95e53eb208c65ba6667fd4341455fa27 \
+        "/d/work/ffmpeg_build_windows/archive/zvbi-0.2.35.tar.bz2"; then
     do_uninstall "${_check[@]}" zvbi-0.2.pc
     _vlc_zvbi_patches=/d/work/ffmpeg_build_windows/patches/zvbi
     do_patch "/d/work/ffmpeg_build_windows/patches/zvbi/zvbi-win32.patch"
@@ -1737,7 +1737,7 @@ if  { ! mpv_disabled vapoursynth || enabled vapoursynth; }; then
     _check=("lib$_python_lib.a")
     if files_exist "${_check[@]}"; then
         do_print_status "python $_python_ver" "$green" "Up-to-date"
-    elif do_wget "https://www.python.org/ftp/python/$_python_ver/python-$_python_ver-embed-$_arch.zip"; then
+    elif do_wget_local "/d/work/ffmpeg_build_windows/archive/python-$_python_ver-embed-$_arch.zip"; then
         gendef "$_python_lib.dll" >/dev/null 2>&1
         dlltool -y "lib$_python_lib.a" -d "$_python_lib.def"
         [[ -f lib$_python_lib.a ]] && do_install "lib$_python_lib.a"
@@ -1748,7 +1748,7 @@ if  { ! mpv_disabled vapoursynth || enabled vapoursynth; }; then
     _check=(lib{vapoursynth,vsscript}.a vapoursynth{,-script}.pc vapoursynth/{VS{Helper,Script},VapourSynth}.h)
     if pc_exists "vapoursynth = $_vsver" && files_exist "${_check[@]}"; then
         do_print_status "vapoursynth R$_vsver" "$green" "Up-to-date"
-    elif do_wget "https://github.com/vapoursynth/vapoursynth/releases/download/R$_vsver/VapourSynth${bits%bit}-Portable-R$_vsver.7z"; then
+    elif do_wget_local "/d/work/ffmpeg_build_windows/archive/VapourSynth${bits%bit}-Portable-R$_vsver.7z"; then
         do_uninstall {vapoursynth,vsscript}.lib include/vapoursynth "${_check[@]}"
         do_install sdk/include/*.h include/vapoursynth/
 
@@ -1912,8 +1912,8 @@ if [[ $ffmpeg != no ]]; then
             else
               _sha256=7be41e496f43272b707e4d9bafdfc27d53b00aaf9468667a4a2107c192b27249
             fi
-            do_wget -c -r -q -h $_sha256 \
-            "https://github.com/cisco/openh264/releases/download/v2.0.0/openh264-2.0.0-win${bits%bit}.dll.bz2" \
+            do_wget_local -c -r -q -h $_sha256 \
+            "/d/work/ffmpeg_build_windows/archive/openh264-2.0.0-win${bits%bit}.dll.bz2" \
                 libopenh264.dll.bz2
             [[ -f libopenh264.dll.bz2 ]] && bunzip2 libopenh264.dll.bz2
             unset _sha256
