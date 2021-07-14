@@ -353,7 +353,7 @@ check_hash() {
 
 # get local machine file
 do_wget_local() {
-    local nocd=false norm=false quiet=false notmodified=false hash
+    local nocd=false norm=false quiet=false notmodified=false noextract=false hash
     while true; do
         case $1 in
         -c) nocd=true && shift ;;
@@ -361,6 +361,7 @@ do_wget_local() {
         -q) quiet=true && shift ;;
         -h) hash="$2" && shift 2 ;;
         -z) notmodified=true && shift ;;
+		-e) noextract=true && shift ;;
         --)
             shift
             break
@@ -391,7 +392,7 @@ do_wget_local() {
     fi
 
     $norm || add_to_remove "$(pwd)/$archive"
-    do_extract "$archive" "$dirName"
+    $noextract || do_extract "$archive" "$dirName"
     ! $norm && [[ -n $dirName ]] && ! $nocd && add_to_remove
     return 0
 }

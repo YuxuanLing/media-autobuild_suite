@@ -157,7 +157,6 @@ apache_ant_ver=$(get_last_version "$apache_ant_ver" "apache-ant" "1\.\d+\.\d+")
 printf "apache_ant_ver: $apache_ant_ver \n"
 ## do_wget_test -r -c "https://www.apache.org/dist/ant/binaries/apache-ant-${apache_ant_ver:-1.10.6}-bin.zip"  apache-ant.zip;
 
-
 do_patch_test() {
     local binarypatch="--binary"
     case $1 in -p) binarypatch="" && shift ;; esac

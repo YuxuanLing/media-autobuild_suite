@@ -1853,8 +1853,8 @@ if { { [[ $ffmpeg != no ]] && enabled vulkan; } || ! mpv_disabled vulkan; } &&
         do_print_progress "Installing Vulkan-Headers"
         do_uninstall include/vulkan
         do_cmakeinstall
-        do_wget -c -r -q "$_DeadSix27/additional_headers/d3dkmthk.h"
-        do_wget -c -r -q "$_DeadSix27/additional_headers/d3dukmdt.h"
+        do_wget_local -c -r -q -e "$_DeadSix27/additional_headers/d3dkmthk.h"
+        do_wget_local -c -r -q -e "$_DeadSix27/additional_headers/d3dukmdt.h"
         do_install d3d{kmthk,ukmdt}.h include/
     cd_safe "$(get_first_subdir -f)"
     do_print_progress "Building Vulkan-Loader"
