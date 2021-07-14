@@ -2584,3 +2584,8 @@ safe_git_clean() {
         -e '**/ab-suite.*.log' \
         "${@}"
 }
+
+
+function pause(){
+   read -p "$*"
+}

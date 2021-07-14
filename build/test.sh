@@ -162,7 +162,7 @@ do_patch_test() {
 
 
 do_patch_test "/d/work/ffmpeg_build_windows/patches/libtiff.git/233.patch" am
-
+pause 'Compile finish, Press [Enter] key to exit...'
 
 :<<!
 url="https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win32.zip"
