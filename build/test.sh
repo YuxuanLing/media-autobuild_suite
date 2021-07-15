@@ -214,6 +214,25 @@ do_patch_test() {
 }
 
 ##do_patch_test "/d/work/ffmpeg_build_windows/patches/libtiff.git/233.patch" am
+#        printf '%s\n' \
+#            "Failed to get a FFmpeg checkout" \
+#            "Please try again or put FFmpeg source code copy into ffmpeg/ manually." \
+#            "Nightly snapshot: http://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2" \
+#            "Either re-run the script or extract above to inside /build/mplayer-svn."
+# do some time consuming task here
+# read -p "Give me some input: " ret
+do_prompt "Give me some input: "
+echo $ret
+
+
+    _check=(spirv_cross/spirv_cross_c.h spirv-cross.pc libspirv-cross.a)
+    if ! mpv_disabled spirv-cross &&
+        do_vcs "/d/work/ffmpeg_build_windows/SPIRV-Cross.git"; then
+        do_uninstall include/spirv_cross "${_check[@]}" spirv-cross-c-shared.pc libspirv-cross-c-shared.a
+        do_patch "/d/work/ffmpeg_build_windows/patches/SPIRV-Cross.git/master...taisei-project_meson.patch meson.patch" am
+        do_mesoninstall
+        do_checkIfExist
+    fi
 
 pause 'Compile finish, Press [Enter] key to exit...'
 

@@ -2296,7 +2296,7 @@ if [[ $mpv != n ]] && pc_exists libavcodec libavformat libswscale libavfilter; t
     if ! mpv_disabled spirv-cross &&
         do_vcs "/d/work/ffmpeg_build_windows/SPIRV-Cross.git"; then
         do_uninstall include/spirv_cross "${_check[@]}" spirv-cross-c-shared.pc libspirv-cross-c-shared.a
-        do_patch "/d/work/ffmpeg_build_windows/patches/SPIRV-Cross.git/master...taisei-project:meson.patch meson.patch" am
+        do_patch "/d/work/ffmpeg_build_windows/patches/SPIRV-Cross.git/master...taisei-project_meson.patch meson.patch" am
         do_mesoninstall
         do_checkIfExist
     fi
