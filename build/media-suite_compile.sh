@@ -2780,7 +2780,7 @@ EOF
 fi
 
 _check=(bin-video/ffmbc.exe)
-if [[ $ffmbc = y ]] && do_vcs "/d/work/ffmpeg_build_windows#branch=ffmbc"; then # no other branch
+if [[ $ffmbc = y ]] && do_vcs "/d/work/ffmpeg_build_windows/FFmbc.git#branch=ffmbc"; then # no other branch
     _notrequired=true
     create_build_dir
     log configure ../configure --target-os=mingw32 --enable-gpl \
