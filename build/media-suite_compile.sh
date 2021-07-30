@@ -1721,8 +1721,9 @@ fi
 _check=(librist.{a,pc} librist/librist.h)
 [[ $standalone = y ]] && _check+=(bin-global/rist{sender,receiver,2rist,srppasswd}.exe)
 if enabled librist && do_vcs "$LOCALSOURCESDIR/librist.git"; then
-    do_patch "$LOCALSOURCESDIR/patches/librist.git/67d4aafc2f580f354846f3e866b350a190539f9b.patch" am
-    do_patch "$LOCALSOURCESDIR/patches/librist.git/176.patch" am
+    #do_patch "$LOCALSOURCESDIR/patches/librist.git/66cedb7b847b02024b3fe38e6165f0bfe3ec98f5.patch" am
+	do_patch "$LOCALSOURCESDIR/patches/librist.git/0113554d3b0bf881b0752637a60af340d1191859.patch" am
+    #do_patch "$LOCALSOURCESDIR/patches/librist.git/176.patch" am
     do_uninstall include/librist "${_check[@]}"
     extracommands=("-Ddisable_json=true")
     [[ $standalone = y ]] || extracommands+=("-Dbuilt_tools=false")
