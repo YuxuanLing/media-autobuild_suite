@@ -1432,10 +1432,12 @@ if not exist "%instdir%\msys64\msys2_shell.cmd" (
     echo.- Download and install msys2 basic system
     echo.
     echo -------------------------------------------------------------------------------
-    echo [System.Net.ServicePointManager]::SecurityProtocol = 'Tls12'; ^
-        (New-Object System.Net.WebClient^).DownloadFile(^
-        'https://github.com/msys2/msys2-installer/releases/download/nightly-x86_64/msys2-base-x86_64-latest.sfx.exe', ^
-        "$PWD\msys2-base.sfx.exe"^) | powershell -NoProfile -Command - || goto :errorMsys
+	if not exist %build%\msys2-base.sfx.exe (
+       echo [System.Net.ServicePointManager]::SecurityProtocol = 'Tls12'; ^
+            (New-Object System.Net.WebClient^).DownloadFile(^
+            'https://github.com/msys2/msys2-installer/releases/download/nightly-x86_64/msys2-base-x86_64-latest.sfx.exe', ^
+            "$PWD\msys2-base.sfx.exe"^) | powershell -NoProfile -Command - || goto :errorMsys
+    )
     :unpack
     if exist %build%\msys2-base.sfx.exe (
         echo -------------------------------------------------------------------------------
@@ -1444,7 +1446,7 @@ if not exist "%instdir%\msys64\msys2_shell.cmd" (
         echo.
         echo -------------------------------------------------------------------------------
         .\msys2-base.sfx.exe x -y -o".."
-        if exist msys2-base.sfx.exe del msys2-base.sfx.exe
+        rem if exist msys2-base.sfx.exe del msys2-base.sfx.exe
     )
 
     if not exist %instdir%\msys64\usr\bin\msys-2.0.dll (

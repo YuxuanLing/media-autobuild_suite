@@ -51,7 +51,6 @@ while true; do
     --ffmbc=* ) ffmbc=${1#*=} && shift ;;
     --curl=* ) curl=${1#*=} && shift ;;
     --cyanrip=* ) cyanrip=${1#*=} && shift ;;
-    --redshift=* ) redshift=${1#*=} && shift ;;
     --ripgrep=* ) ripgrep=${1#*=} && shift ;;
     --rav1e=* ) rav1e=${1#*=} && shift ;;
     --dav1d=* ) dav1d=${1#*=} && shift ;;
