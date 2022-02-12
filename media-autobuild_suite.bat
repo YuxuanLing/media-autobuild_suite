@@ -1360,6 +1360,8 @@ if %buildwithccache%==2 set "ccache=n"
 if %buildwithccache% GTR 2 GOTO ccache
 if %deleteINI%==1 echo.ccache=^%buildwithccache%>>%ini%
 
+
+
 :noMintty
 if %noMinttyINI%==0 (
     echo -------------------------------------------------------------------------------
@@ -1388,7 +1390,7 @@ if %noMinttyF%==1 (
 if %noMinttyF%==2 set "noMintty=n"
 if %noMinttyF% GTR 2 GOTO noMintty
 if %deleteINI%==1 echo.noMintty=^%noMinttyF%>>%ini%
-
+GOTO runCompiling
 rem ------------------------------------------------------------------
 rem download and install basic msys2 system:
 rem ------------------------------------------------------------------
@@ -1611,6 +1613,7 @@ if %updateSuite%==y (
 rem update
 call :runBash update.log /build/media-suite_update.sh --build32=%build32% --build64=%build64%
 
+:runCompiling
 if exist "%build%\update_core" (
     echo.-------------------------------------------------------------------------------
     echo.critical updates
@@ -1685,6 +1688,7 @@ if %noMintty%==y (
 )
 exit /B %ERRORLEVEL%
 endlocal
+pause
 goto :EOF
 
 :createBaseFolders

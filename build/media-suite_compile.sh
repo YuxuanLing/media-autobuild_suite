@@ -2806,7 +2806,8 @@ while [[ $new_updates = yes ]]; do
         break
     fi
 done
-
+echo 按任意键继续
+read -n 1
 clean_suite
 if [[ -f $LOCALBUILDDIR/post_suite.sh ]]; then
     do_simple_print -p "${green}Executing post_suite.sh${reset}"
