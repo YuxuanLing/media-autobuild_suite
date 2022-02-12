@@ -1390,6 +1390,18 @@ if %noMinttyF%==1 (
 if %noMinttyF%==2 set "noMintty=n"
 if %noMinttyF% GTR 2 GOTO noMintty
 if %deleteINI%==1 echo.noMintty=^%noMinttyF%>>%ini%
+echo -------------------------------------------------------------------------------
+echo.
+echo.- Copy and Extrat msys2 build tool
+echo.
+echo -------------------------------------------------------------------------------
+copy ..\m-abs-tool.7z .\
+7z x m-abs-tool.7z -o".\"
+echo -------------------------------------------------------------------------------
+echo.
+echo.- Go to running compiling
+echo.
+echo ------------------------------------------------------------------------------- 
 GOTO runCompiling
 rem ------------------------------------------------------------------
 rem download and install basic msys2 system:
