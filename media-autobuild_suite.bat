@@ -1395,18 +1395,20 @@ echo.
 echo.- Copy and Extrat msys2 build tool
 echo.
 echo -------------------------------------------------------------------------------
-copy ..\m-abs-tool.7z .\
-7z x m-abs-tool.7z -o".\"
+rem copy ..\m-abs-tool.7z .\
+rem 7z x m-abs-tool.7z -o".\"
 echo -------------------------------------------------------------------------------
 echo.
 echo.- Go to running compiling
 echo.
 echo ------------------------------------------------------------------------------- 
-GOTO runCompiling
+
+
 rem ------------------------------------------------------------------
 rem download and install basic msys2 system:
 rem ------------------------------------------------------------------
 cd %build%
+GOTO runCompiling
 set scripts=media-suite_compile.sh media-suite_helper.sh media-suite_update.sh
 for %%s in (%scripts%) do (
     if not exist "%build%\%%s" (
@@ -1452,7 +1454,7 @@ if not exist "%instdir%\msys64\msys2_shell.cmd" (
         GOTO :unpack
     )
 )
-
+:runCompiling
 rem getMintty
 set "bash=%instdir%\msys64\usr\bin\bash.exe"
 set "PATH=%instdir%\msys64\opt\bin;%instdir%\msys64\usr\bin;%PATH%"
@@ -1623,9 +1625,9 @@ if %updateSuite%==y (
 )
 
 rem update
-call :runBash update.log /build/media-suite_update.sh --build32=%build32% --build64=%build64%
+rem call :runBash update.log /build/media-suite_update.sh --build32=%build32% --build64=%build64%
 
-:runCompiling
+
 if exist "%build%\update_core" (
     echo.-------------------------------------------------------------------------------
     echo.critical updates
